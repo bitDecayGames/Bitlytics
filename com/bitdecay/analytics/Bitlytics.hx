@@ -4,22 +4,21 @@ import haxe.Timer;
 import com.bitdecay.db.Values;
 import com.bitdecay.db.DataStore;
 import com.bitdecay.db.LocalStore;
+import com.bitdecay.net.DataSender;
 
 class Bitlytics {
 	private static var instance:Bitlytics;
 
 	private var gameID:String;
-	private var authToken:String;
-	private var org:String;
-	private var bucket:String;
+	private var sender:DataSender;
 
 	private var store:DataStore;
 	private var session:Session;
 
 	private var timer:Timer;
 
-	public static function Init(name:String, authToken:String, org:String, bucket:String) {
-		instance = new Bitlytics(name, authToken, org, bucket);
+	public static function Init(name:String, sender:DataSender) {
+		instance = new Bitlytics(name, sender);
 	}
 
 	public static function Instance():Bitlytics {
@@ -29,12 +28,10 @@ class Bitlytics {
 		return instance;
 	}
 
-	private function new(id:String, authToken:String, org:String, bucket:String) {
+	private function new(id:String, sender:DataSender) {
 		store = new LocalStore();
 		this.gameID = id;
-		this.authToken = authToken;
-		this.org = org;
-		this.bucket = bucket;
+		this.sender = sender;
 		store.Init(gameID + "_data");
 	}
 
@@ -49,7 +46,7 @@ class Bitlytics {
 
 		trace("starting sesion: " + num);
 		session = new Session(num, [
-			new Tag(Tags.GameID, store.GetString(gameID)),
+			new Tag(Tags.GameID, gameID),
 			new Tag(Tags.ClientID, store.GetString(Values.ClientID))
 		]);
 
@@ -62,6 +59,10 @@ class Bitlytics {
 	}
 
 	public function Queue(name:String, value:Float) {
+		if (name.indexOf(" ") > -1) {
+			trace('Metrics cannot contain spaces. Dropping metric ${name}');
+			return;
+		}
 		session.Add(new Metric(name, null, value));
 	}
 
@@ -69,10 +70,13 @@ class Bitlytics {
 		var data = session.GetAllPendingData();
 		// TODO: In doing this, all events will have the same time stamp
 		// This means that our metric resolution is our reporting interval
-		if (data.length > 0) {
-			trace("Sending " + data.length + " data events");
-		} else {
+		if (data.length == 0) {
 			trace("No data to send");
+			return;
 		}
+
+		trace("Sending " + data.length + " data events");
+		var body = sender.Format(data);
+		sender.Post(body);
 	}
 }
