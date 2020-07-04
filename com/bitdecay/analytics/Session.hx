@@ -1,13 +1,14 @@
 package com.bitdecay.analytics;
 
+import haxe.Timer;
+
 class Session {
 	public var num:Int;
 
 	private var defaultTags:Array<Tag>;
 
 	private var start:Float;
-	private var pendingData:List<Metric>;
-
+	private var pendingData:Array<Metric>;
 
 	public function new(sessionNum:Int, tags:Array<Tag>) {
 		num = sessionNum;
@@ -16,7 +17,7 @@ class Session {
 		defaultTags.push(new Tag(Tags.Session, Std.string(num)));
 
 		start = Date.now().getTime();
-		pendingData = new List<Metric>();
+		pendingData = new Array<Metric>();
 	}
 
 	public function Add(metric:Metric):Void {
@@ -24,8 +25,12 @@ class Session {
 			metric.tags.push(t);
 		}
 
-		pendingData.add(metric);
+		pendingData.push(metric);
 		trace("session " + num + " now has " + pendingData.length + " pending metrics");
+	}
+
+	public function GetAllPendingData():Array<Metric> {
+		return pendingData.splice(0, pendingData.length);
 	}
 
 	public function End():Float {
