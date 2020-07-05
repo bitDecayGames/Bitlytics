@@ -13,12 +13,12 @@ class LocalStore implements DataStore {
 		sharedObj = SharedObject.getLocal(key);
 
 		if (Reflect.getProperty(sharedObj.data, Values.Initialized) == true) {
-			trace("LocalStore (\"" + key + "\") already initialized");
+			trace("LocalStore (\"" + key + "\") loaded for initialized existing client with UUID: " + Reflect.getProperty(sharedObj.data, Values.ClientID));
 			return;
 		} else {
 			Reflect.setField(sharedObj.data, Values.Initialized, true);
 			Reflect.setField(sharedObj.data, Values.ClientID, UUID.create());
-			Reflect.setField(sharedObj.data, Values.SessionNum, 0);
+			Reflect.setField(sharedObj.data, Values.SessionNum, 1);
 			trace("LocalStore (\"" + key + "\") initialized with UUID: " + Reflect.getProperty(sharedObj.data, Values.ClientID));
 		}
 	}

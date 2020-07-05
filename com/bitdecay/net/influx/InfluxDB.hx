@@ -18,16 +18,13 @@ class InfluxDB implements DataSender {
 		this.authToken = authToken;
 	}
 
-	public function Post(data:String):Void {
+	public function GetPost(data:String):Http {
 		var request:Http = new Http('${baseURL}?org=${org}&bucket=${bucket}&precision=s');
 		var postData:String = data;
 		request.addHeader("Content-Type", "text/plain");
 		request.addHeader("Authorization", 'Token ${authToken}');
 		request.setPostData(postData);
-		// request.request(true);
-
-		trace('POSTING to: ${request.url}');
-		trace('BODY: ${data}');
+		return request;
 	}
 
 	public function Format(data:Array<Metric>):String {
@@ -39,12 +36,13 @@ class InfluxDB implements DataSender {
 
 			buf.add(d.name);
 
-			buf.add(" ");
+			if (d.tags.length > 0) {
+				buf.add(",");
 
-			buf.add([for (tag in d.tags) {
-				'${tag.name}=${tag.value}';
-			}].join(","));
-
+				buf.add([for (tag in d.tags) {
+					'${tag.name}=${tag.value}';
+				}].join(","));
+			}
 			buf.add(" ");
 			
 			buf.add('value=${d.value}');

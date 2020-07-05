@@ -17,6 +17,8 @@ class Bitlytics {
 
 	private var timer:Timer;
 
+	private var onError:String->Void;
+
 	public static function Init(name:String, sender:DataSender) {
 		instance = new Bitlytics(name, sender);
 	}
@@ -32,13 +34,18 @@ class Bitlytics {
 		store = new LocalStore();
 		this.gameID = id;
 		this.sender = sender;
+		onError = traceError;
 		store.Init(gameID + "_data");
 	}
 
-	public function NewSession(reportInterval:Float = 10000):Void {
+	private function traceError(msg:String) {
+		trace(msg);
+	}
+
+	public function NewSession(reportIntervalMS:Int = 10000):Void {
 		var num = store.NextSessionNum();
 		if (session != null) {
-			trace("starting new sesion while existing session in-progress");
+			trace("starting new session while existing session in-progress");
 			session.End();
 			timer.stop();
 			postPendingData();
@@ -50,7 +57,7 @@ class Bitlytics {
 			new Tag(Tags.ClientID, store.GetString(Values.ClientID))
 		]);
 
-		timer = new Timer(reportInterval);
+		timer = new Timer(reportIntervalMS);
 		timer.run = postPendingData;
 	}
 
@@ -66,6 +73,10 @@ class Bitlytics {
 		session.Add(new Metric(name, null, value));
 	}
 
+	public function setOnError(func:String->Void):Void {
+		onError = func;
+	}
+
 	private function postPendingData():Void {
 		var data = session.GetAllPendingData();
 		// TODO: In doing this, all events will have the same time stamp
@@ -77,6 +88,11 @@ class Bitlytics {
 
 		trace("Sending " + data.length + " data events");
 		var body = sender.Format(data);
-		sender.Post(body);
+		var req = sender.GetPost(body);
+		if (onError != null) {
+			req.onError = onError;
+		}
+
+		req.request(true);
 	}
 }
