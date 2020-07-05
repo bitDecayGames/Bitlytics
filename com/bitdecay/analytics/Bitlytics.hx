@@ -17,6 +17,7 @@ class Bitlytics {
 
 	private var timer:Timer;
 
+	private var debugMode:Bool = false;
 	private var onError:String->Void;
 
 	public static function Init(name:String, sender:DataSender) {
@@ -42,13 +43,16 @@ class Bitlytics {
 		trace(msg);
 	}
 
+	public function SetDebug(debug:Bool) {
+		debugMode = debug;
+		trace('Bitlytics debug set to: ${debug}');
+	}
+
 	public function NewSession(reportIntervalMS:Int = 10000):Void {
 		var num = store.NextSessionNum();
 		if (session != null) {
 			trace("starting new session while existing session in-progress");
-			session.End();
-			timer.stop();
-			postPendingData();
+			EndSession();
 		}
 
 		trace("starting sesion: " + num);
@@ -63,6 +67,10 @@ class Bitlytics {
 
 	public function EndSession():Void {
 		session.End();
+		if (timer != null) {
+			timer.stop();
+		}
+		postPendingData();
 	}
 
 	public function Queue(name:String, value:Float) {
@@ -86,8 +94,14 @@ class Bitlytics {
 			return;
 		}
 
-		trace("Sending " + data.length + " data events");
 		var body = sender.Format(data);
+
+		if (debugMode) {
+			trace("Sending " + data.length + " data events");
+			trace('Formatted analytics:\n${body}');
+			return;
+		}
+
 		var req = sender.GetPost(body);
 		if (onError != null) {
 			req.onError = onError;

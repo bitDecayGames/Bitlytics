@@ -23,6 +23,10 @@ class LocalStore implements DataStore {
 		}
 	}
 
+	public function PutString(key:String, value:String):Void {
+		Reflect.setField(sharedObj.data, key, value);
+	}
+
 	public function GetString(prop:String):String {
 		return Reflect.getProperty(sharedObj.data, prop);
 	}

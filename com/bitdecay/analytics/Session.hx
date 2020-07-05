@@ -18,6 +18,8 @@ class Session {
 
 		start = Date.now().getTime();
 		pendingData = new Array<Metric>();
+
+		Add(new Metric(Common.SessionStarted, null, 1));
 	}
 
 	public function Add(metric:Metric):Void {
@@ -35,6 +37,8 @@ class Session {
 
 	public function End():Float {
 		var duration = Date.now().getTime() - start;
+		Add(new Metric(Common.SessionEnded, null, duration));
+
 		return duration;
 	}
 }
