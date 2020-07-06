@@ -55,7 +55,7 @@ class Bitlytics {
 			EndSession();
 		}
 
-		trace("starting sesion: " + num);
+		trace("starting session: " + num);
 		session = new Session(num, [
 			new Tag(Tags.GameID, gameID),
 			new Tag(Tags.ClientID, store.GetString(Values.ClientID))
@@ -63,6 +63,14 @@ class Bitlytics {
 
 		timer = new Timer(reportIntervalMS);
 		timer.run = postPendingData;
+	}
+
+	public function Pause() {
+		session.Pause();
+	}
+
+	public function Resume() {
+		session.Resume();
 	}
 
 	public function EndSession():Void {

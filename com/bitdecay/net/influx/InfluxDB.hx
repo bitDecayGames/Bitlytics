@@ -24,7 +24,6 @@ class InfluxDB implements DataSender {
 		request.addHeader("Content-Type", "text/plain");
 		request.addHeader("Authorization", 'Token ${authToken}');
 		request.setPostData(postData);
-		trace("payload: " + postData);
 		return request;
 	}
 

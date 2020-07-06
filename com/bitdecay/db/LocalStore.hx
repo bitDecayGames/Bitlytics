@@ -13,18 +13,20 @@ class LocalStore implements DataStore {
 		sharedObj = SharedObject.getLocal(key);
 
 		if (Reflect.getProperty(sharedObj.data, Values.Initialized) == true) {
-			trace("LocalStore (\"" + key + "\") loaded for initialized existing client with UUID: " + Reflect.getProperty(sharedObj.data, Values.ClientID));
+			trace("LocalStore (\"" + key + "\") loaded for existing client with UUID: " + Reflect.getProperty(sharedObj.data, Values.ClientID));
 			return;
 		} else {
 			Reflect.setField(sharedObj.data, Values.Initialized, true);
 			Reflect.setField(sharedObj.data, Values.ClientID, UUID.create());
 			Reflect.setField(sharedObj.data, Values.SessionNum, 1);
+			Flush();
 			trace("LocalStore (\"" + key + "\") initialized with UUID: " + Reflect.getProperty(sharedObj.data, Values.ClientID));
 		}
 	}
 
 	public function PutString(key:String, value:String):Void {
 		Reflect.setField(sharedObj.data, key, value);
+		sharedObj.flush();
 	}
 
 	public function GetString(prop:String):String {
@@ -34,6 +36,7 @@ class LocalStore implements DataStore {
 	public function NextSessionNum():Int {
 		var num = Reflect.getProperty(sharedObj.data, Values.SessionNum);
 		Reflect.setField(sharedObj.data, Values.SessionNum, num+1);
+		Flush();
 		return num;
 	}
 
