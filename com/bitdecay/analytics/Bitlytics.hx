@@ -55,7 +55,6 @@ class Bitlytics {
 			EndSession();
 		}
 
-		trace("starting session: " + num);
 		session = new Session(num, [
 			new Tag(Tags.GameID, gameID),
 			new Tag(Tags.ClientID, store.GetString(Values.ClientID))
@@ -98,7 +97,10 @@ class Bitlytics {
 		// TODO: In doing this, all events will have the same time stamp
 		// This means that our metric resolution is our reporting interval
 		if (data.length == 0) {
+			#if debug_analytics
 			trace("No data to send");
+			#end
+		
 			return;
 		}
 

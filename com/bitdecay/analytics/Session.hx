@@ -1,9 +1,12 @@
 package com.bitdecay.analytics;
 
+import com.bitdecay.uuid.UUID;
 import haxe.Timer;
 
 class Session {
 	public var num:Int;
+
+	private var id:String;
 
 	private var defaultTags:Array<Tag>;
 
@@ -16,9 +19,16 @@ class Session {
 
 	public function new(sessionNum:Int, tags:Array<Tag>) {
 		num = sessionNum;
+
+		id = UUID.create();
+
+		#if debug_analytics
+		trace('created session: ${id} (${num})');
+		#end
 		
 		this.defaultTags = tags;
 		defaultTags.push(new Tag(Tags.Session, Std.string(num)));
+		defaultTags.push(new Tag(Tags.SessionID, id));
 
 		start = Date.now().getTime();
 		pendingData = new Array<Metric>();
