@@ -22,7 +22,7 @@ class Session {
 
 		id = UUID.create();
 
-		#if debug_analytics
+		#if debug_level > 1
 		trace('created session: ${id} (${num})');
 		#end
 		

@@ -111,18 +111,21 @@ class Bitlytics {
 		// TODO: By batching events, all events will have the same time stamp
 		// This means that our metric resolution is our reporting interval
 		if (data.length == 0) {
-			if (devMode) {
-				trace("No data to send");
-			}
+			#if debug_level > 2
+			trace("No data to send");
+			#end
 
 			return;
 		}
 
 		var body = sender.Format(data);
 
+		#if debug_level > 2
+		trace("Sending " + data.length + " data events");
+		#end
+
 		if (devMode) {
-			trace("Sending " + data.length + " data events");
-			trace('Formatted analytics:\n${body}');
+			trace('Formatted ${data.length} analytics:\n${body}');
 			return;
 		}
 
