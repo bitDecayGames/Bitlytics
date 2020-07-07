@@ -46,6 +46,10 @@ class Session {
 		timing = true;
 	}
 
+	public function AddDefaultTag(tag:Tag) {
+		defaultTags.push(tag);
+	}
+
 	public function Add(metric:Metric):Void {
 		for (t in defaultTags) {
 			metric.tags.push(t);

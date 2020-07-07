@@ -17,7 +17,7 @@ class Bitlytics {
 
 	private var timer:Timer;
 
-	private var debugMode:Bool = false;
+	private var devMode:Bool = false;
 	private var onError:String->Void;
 
 	public static function Init(name:String, sender:DataSender) {
@@ -37,18 +37,24 @@ class Bitlytics {
 		this.sender = sender;
 		onError = traceError;
 		store.Init(gameID + "_data");
+
+		#if dev_analytics
+		trace('dev_analytics compilation flag detected');
+		SetDevMode(true);
+		#end
 	}
 
 	private function traceError(msg:String) {
 		trace(msg);
 	}
 
-	public function SetDebug(debug:Bool) {
-		debugMode = debug;
-		trace('Bitlytics debug set to: ${debug}');
+	// Allow for manual control over dev state
+	public function SetDevMode(dev:Bool) {
+		devMode = dev;
+		trace('Bitlytics dev mode set to: ${devMode}');
 	}
 
-	public function NewSession(reportIntervalMS:Int = 10000):Void {
+	public function NewSession(tags:Array<Tag>=null, reportIntervalMS:Int = 10000):Void {
 		var num = store.NextSessionNum();
 		if (session != null) {
 			trace("starting new session while existing session in-progress");
@@ -64,12 +70,20 @@ class Bitlytics {
 		timer.run = postPendingData;
 	}
 
+	public function AddSessionTag(tag:Tag) {
+		session.AddDefaultTag(tag);
+	}
+
 	public function Pause() {
 		session.Pause();
 	}
 
 	public function Resume() {
 		session.Resume();
+	}
+
+	public function ForceFlush() {
+		postPendingData();
 	}
 
 	public function EndSession():Void {
@@ -94,19 +108,19 @@ class Bitlytics {
 
 	private function postPendingData():Void {
 		var data = session.GetAllPendingData();
-		// TODO: In doing this, all events will have the same time stamp
+		// TODO: By batching events, all events will have the same time stamp
 		// This means that our metric resolution is our reporting interval
 		if (data.length == 0) {
-			#if debug_analytics
-			trace("No data to send");
-			#end
-		
+			if (devMode) {
+				trace("No data to send");
+			}
+
 			return;
 		}
 
 		var body = sender.Format(data);
 
-		if (debugMode) {
+		if (devMode) {
 			trace("Sending " + data.length + " data events");
 			trace('Formatted analytics:\n${body}');
 			return;
