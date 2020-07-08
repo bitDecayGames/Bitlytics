@@ -1,5 +1,6 @@
 package com.bitdecay.net.influx;
 
+import haxe.Json;
 import haxe.Http;
 
 import com.bitdecay.analytics.Metric;
@@ -16,6 +17,10 @@ class InfluxDB implements DataSender {
 		this.org = org;
 		this.bucket = bucket;
 		this.authToken = authToken;
+	}
+
+	public static function load(input:Dynamic, authToken:String):InfluxDB {
+		return new InfluxDB(input.api, input.org, input.bucket, authToken);
 	}
 
 	public function GetPost(data:String):Http {

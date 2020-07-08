@@ -32,16 +32,22 @@ class Bitlytics {
 	}
 
 	private function new(id:String, sender:DataSender) {
-		store = new LocalStore();
+		#if dev_analytics
+		trace('dev_analytics compilation flag detected');
+		id = "dev_in_progress";
+		SetDevMode(true);
+		#end
+
 		this.gameID = id;
 		this.sender = sender;
 		onError = traceError;
-		store.Init(gameID + "_data");
 
-		#if dev_analytics
-		trace('dev_analytics compilation flag detected');
-		SetDevMode(true);
-		#end
+		try {
+			store = new LocalStore();
+			store.Init(gameID + "_data");
+		} catch(e:Dynamic) {
+			throw 'Failed to load data store with id `${gameID}. Did you set your analytics name properly in the config?';
+		}
 	}
 
 	private function traceError(msg:String) {
