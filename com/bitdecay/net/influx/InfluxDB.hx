@@ -54,4 +54,22 @@ class InfluxDB implements DataSender {
 		}
 		return buf.toString();
 	}
+
+	public function Validate():String {
+		var errors:Array<String> = [];
+		if (baseURL == null || baseURL == "") {
+			errors.push("baseURL is empty");
+		}
+		if (org == null || org == "") {
+			errors.push("org is empty");
+		}
+		if (bucket == null || bucket == "") {
+			errors.push("bucket is empty");
+		}
+		if (authToken == null || authToken == "") {
+			errors.push("authToken is empty");
+		}
+
+		return errors.join(", ");
+	}
 }

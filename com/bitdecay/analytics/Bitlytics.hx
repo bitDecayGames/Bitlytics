@@ -42,6 +42,8 @@ class Bitlytics {
 		this.sender = sender;
 		onError = traceError;
 
+		sanityCheck();
+
 		try {
 			store = new LocalStore();
 			store.Init(gameID + "_data");
@@ -58,6 +60,32 @@ class Bitlytics {
 	public function SetDevMode(dev:Bool) {
 		devMode = dev;
 		trace('Bitlytics dev mode set to: ${devMode}');
+	}
+
+	private function sanityCheck() {
+		if (gameID.indexOf("<") > -1 || gameID.indexOf(" ") > -1) {
+			if (devMode) {
+				trace('gameID "${gameID}" should not contain special characters or spaces. This will not work in a prod build');
+			} else {
+				throw 'gameID "${gameID} should not contain special characters or spaces';
+			}
+		}
+
+		var senderStatus = sender.Validate();
+		if (senderStatus != null && senderStatus != "") {
+			if (devMode) {
+				trace('sender failed validation, this will not work in a prod build: "${senderStatus}"');
+			} else {
+				throw 'bitlytics sender invalid: ${senderStatus}';
+			}
+		}
+
+		if (devMode) {
+			var req = sender.GetPost(sender.Format([new Metric("sanity", null, 1)]));
+			req.onError = (s) -> { trace('sender sanity call failed. bitlytics will likely fail in prod : ${s}'); };
+			req.onData = (s) -> { trace('sender sanity call successful. bitlytics should function in prod'); };
+			req.request(true);
+		}
 	}
 
 	public function NewSession(tags:Array<Tag>=null, reportIntervalMS:Int = 10000):Void {
