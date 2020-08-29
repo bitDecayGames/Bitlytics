@@ -128,12 +128,12 @@ class Bitlytics {
 		postPendingData();
 	}
 
-	public function Queue(name:String, value:Float) {
+	public function Queue(name:String, value:Float, tags:Array<Tag>=null) {
 		if (name.indexOf(" ") > -1) {
 			trace('Metrics cannot contain spaces. Dropping metric ${name}');
 			return;
 		}
-		session.Add(new Metric(name, null, value));
+		session.Add(new Metric(name, tags, value));
 	}
 
 	public function setOnError(func:String->Void):Void {
