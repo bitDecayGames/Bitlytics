@@ -32,6 +32,11 @@ class Bitlytics {
 	}
 
 	private function new(id:String, sender:DataSender, devMode:Bool) {
+		#if dev_analytics
+		trace('dev_analytics compilation flag detected');
+		devMode = true;			}
+		#end
+
 		if (devMode) {
 			SetDevMode(true);
 			id = "dev_in_progress";

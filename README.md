@@ -28,6 +28,7 @@ Currently only InfluxDB Cloud is supported
 	```
 	Bitlytics.Instance().SetDevMode(true);
 	```
+	* This can also be done via the `-D dev_analytics` compilation flag
 1. Start a session to create data points within
 	```
 	Bitlytics.Instance().NewSession();
