@@ -34,7 +34,7 @@ class Bitlytics {
 	private function new(id:String, sender:DataSender, devMode:Bool) {
 		#if dev_analytics
 		trace('dev_analytics compilation flag detected');
-		devMode = true;			}
+		devMode = true;
 		#end
 
 		if (devMode) {
