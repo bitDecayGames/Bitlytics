@@ -20,8 +20,8 @@ class Bitlytics {
 	private var devMode:Bool = false;
 	private var onError:String->Void;
 
-	public static function Init(name:String, sender:DataSender) {
-		instance = new Bitlytics(name, sender);
+	public static function Init(name:String, sender:DataSender, devMode:Bool = false) {
+		instance = new Bitlytics(name, sender, devMode);
 	}
 
 	public static function Instance():Bitlytics {
@@ -31,12 +31,11 @@ class Bitlytics {
 		return instance;
 	}
 
-	private function new(id:String, sender:DataSender) {
-		#if dev_analytics
-		trace('dev_analytics compilation flag detected');
-		id = "dev_in_progress";
-		SetDevMode(true);
-		#end
+	private function new(id:String, sender:DataSender, devMode:Bool) {
+		if (devMode) {
+			SetDevMode(true);
+			id = "dev_in_progress";
+		}
 
 		this.gameID = id;
 		this.sender = sender;
