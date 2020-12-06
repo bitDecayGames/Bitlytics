@@ -68,14 +68,8 @@ class Session {
 	private function addTimeEvent() {
 		var now = Date.now().getTime();
 		sessionTime += (now - start);
-		var time = sessionTime / 1000.0;
 
-		trace("start: " + start);
-		trace("now: " + now);
-		trace("sessionTime: " + sessionTime);
-		trace("time: " + time);
-
-		Add(new Metric(Common.SessionTime, null, time));
+		Add(new Metric(Common.SessionTime, null, sessionTime / 1000.0));
 		start = now;
 	}
 
