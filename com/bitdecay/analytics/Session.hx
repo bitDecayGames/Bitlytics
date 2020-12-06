@@ -4,15 +4,15 @@ import com.bitdecay.uuid.UUID;
 import haxe.Timer;
 
 class Session {
-	public var num:Int;
+	public var num:Int = 0;
 
-	private var id:String;
+	private var id:String = "";
 
 	private var defaultTags:Array<Tag>;
 
-	private var start:Float;
+	private var start:Float = 0.0;
 	private var timing:Bool = true;
-	private var sessionTime:Float;
+	private var sessionTime:Float = 0.0;
 
 
 	private var pendingData:Array<Metric>;
