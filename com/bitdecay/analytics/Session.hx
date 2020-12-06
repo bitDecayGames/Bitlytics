@@ -25,7 +25,7 @@ class Session {
 		#if debug_level > 1
 		trace('created session: ${id} (${num})');
 		#end
-		
+
 		this.defaultTags = tags;
 		defaultTags.push(new Tag(Tags.Session, Std.string(num)));
 		defaultTags.push(new Tag(Tags.SessionID, id));
@@ -68,7 +68,7 @@ class Session {
 	private function addTimeEvent() {
 		var now = Date.now().getTime();
 		sessionTime += (now - start);
-		Add(new Metric(Common.SessionTime, null, sessionTime / 1000));
+		Add(new Metric(Common.SessionTime, null, sessionTime / 1000.0));
 		start = now;
 	}
 
