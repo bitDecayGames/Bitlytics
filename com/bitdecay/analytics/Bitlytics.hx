@@ -128,12 +128,15 @@ class Bitlytics {
 		postPendingData();
 	}
 
-	public function EndSession():Void {
+	public function EndSession(postPending:Bool = true):Void {
 		session.End();
 		if (timer != null) {
 			timer.stop();
 		}
-		postPendingData();
+
+		if (postPending) {
+			postPendingData();
+		}
 	}
 
 	public function Queue(name:String, value:Float, tags:Array<Tag> = null) {
