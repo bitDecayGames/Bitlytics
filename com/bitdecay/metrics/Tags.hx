@@ -1,4 +1,4 @@
-package com.bitdecay.analytics;
+package com.bitdecay.metrics;
 
 class Tags {
 	public static inline var GameID = "gameID";

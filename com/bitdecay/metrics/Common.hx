@@ -1,4 +1,4 @@
-package com.bitdecay.analytics;
+package com.bitdecay.metrics;
 
 class Common {
 	public static inline var GameStarted = "gameStarted";

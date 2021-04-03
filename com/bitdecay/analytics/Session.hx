@@ -1,5 +1,9 @@
 package com.bitdecay.analytics;
 
+import com.bitdecay.metrics.Common;
+import com.bitdecay.metrics.Tags;
+import com.bitdecay.metrics.Tag;
+import com.bitdecay.metrics.Metric;
 import haxe.Int64;
 import com.bitdecay.uuid.UUID;
 
@@ -21,7 +25,7 @@ class Session {
 
 		id = UUID.create();
 
-		#if (debug_level > 1)
+		#if (debug_level > "1")
 		trace('created session: ${id} (${num})');
 		#end
 
@@ -32,7 +36,7 @@ class Session {
 		start = Date.now().getTime();
 		pendingData = new Array<Metric>();
 
-		Add(new Metric(Common.SessionStarted, null, 1));
+		Add(Metric.get(Common.SessionStarted, null, 1));
 	}
 
 	public function Pause() {
@@ -70,7 +74,7 @@ class Session {
 		var now = Date.now().getTime();
 		sessionTime += (now - start);
 
-		Add(new Metric(Common.SessionTime, null, sessionTime / 1000.0));
+		Add(Metric.get(Common.SessionTime, null, sessionTime / 1000.0));
 		start = now;
 	}
 

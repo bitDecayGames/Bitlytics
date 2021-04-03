@@ -1,7 +1,7 @@
 package com.bitdecay.net;
 
 import haxe.Http;
-import com.bitdecay.analytics.Metric;
+import com.bitdecay.metrics.Metric;
 
 interface DataSender {
 	public function GetPost(body:String):Http;

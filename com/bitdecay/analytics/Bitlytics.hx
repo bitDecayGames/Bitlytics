@@ -1,5 +1,8 @@
 package com.bitdecay.analytics;
 
+import com.bitdecay.metrics.Metric;
+import com.bitdecay.metrics.Tag;
+import com.bitdecay.metrics.Tags;
 import haxe.Timer;
 import com.bitdecay.db.Values;
 import com.bitdecay.db.DataStore;
@@ -85,7 +88,8 @@ class Bitlytics {
 		}
 
 		if (devMode) {
-			var req = sender.GetPost(sender.Format([new Metric("sanity", null, 1)]));
+			var sanityMetric = Metric.get("sanity", null, 1);
+			var req = sender.GetPost(sender.Format([sanityMetric]));
 			req.onError = (s) -> {
 				trace('sender sanity call failed. bitlytics will likely fail in prod : ${s}');
 			};
@@ -93,6 +97,7 @@ class Bitlytics {
 				trace('sender sanity call successful. bitlytics should function in prod');
 			};
 			req.request(true);
+			sanityMetric.put();
 		}
 	}
 
@@ -144,7 +149,7 @@ class Bitlytics {
 			trace('Metrics cannot contain spaces. Dropping metric ${name}');
 			return;
 		}
-		session.Add(new Metric(name, tags, value));
+		session.Add(Metric.get(name, tags, value));
 	}
 
 	public function setOnError(func:String->Void):Void {
@@ -154,7 +159,7 @@ class Bitlytics {
 	private function postPendingData():Void {
 		var data = session.GetAllPendingData();
 		if (data.length == 0) {
-			#if (debug_level > 2)
+			#if (debug_level > "2")
 			trace("No data to send");
 			#end
 
@@ -163,7 +168,12 @@ class Bitlytics {
 
 		var body = sender.Format(data);
 
-		#if (debug_level > 2)
+		// recycle our objects
+		for (metric in data) {
+			metric.put();
+		}
+
+		#if (debug_level > "2")
 		trace('Sending ${data.length} data events');
 		#end
 

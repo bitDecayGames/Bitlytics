@@ -1,4 +1,4 @@
-package com.bitdecay.analytics;
+package com.bitdecay.metrics;
 
 class Tag {
 	public var name:String;

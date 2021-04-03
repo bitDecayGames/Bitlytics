@@ -2,7 +2,7 @@ package com.bitdecay.net.influx;
 
 import haxe.Int64;
 import haxe.Http;
-import com.bitdecay.analytics.Metric;
+import com.bitdecay.metrics.Metric;
 
 class InfluxDB implements DataSender {
 	private static inline var MILLI_TO_NANO = 1000000;
@@ -68,7 +68,6 @@ class InfluxDB implements DataSender {
 				// InfluxDB expects nanosecond precision by default
 				buf.add('${d.timestampMS * MILLI_TO_NANO}');
 			}
-
 		}
 		return buf.toString();
 	}
