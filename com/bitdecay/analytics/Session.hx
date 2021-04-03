@@ -1,7 +1,7 @@
 package com.bitdecay.analytics;
 
+import haxe.Int64;
 import com.bitdecay.uuid.UUID;
-import haxe.Timer;
 
 class Session {
 	public var num:Int = 0;
@@ -14,7 +14,6 @@ class Session {
 	private var timing:Bool = true;
 	private var sessionTime:Float = 0.0;
 
-
 	private var pendingData:Array<Metric>;
 
 	public function new(sessionNum:Int, tags:Array<Tag>) {
@@ -22,7 +21,7 @@ class Session {
 
 		id = UUID.create();
 
-		#if debug_level > 1
+		#if (debug_level > 1)
 		trace('created session: ${id} (${num})');
 		#end
 
@@ -54,6 +53,8 @@ class Session {
 		for (t in defaultTags) {
 			metric.tags.push(t);
 		}
+
+		metric.timestampMS = Int64.fromFloat(Date.now().getTime());
 
 		pendingData.push(metric);
 	}

@@ -51,7 +51,7 @@ class Bitlytics {
 		try {
 			store = new LocalStore();
 			store.Init(gameID + "_data");
-		} catch(e:Dynamic) {
+		} catch (e:Dynamic) {
 			throw 'Failed to load data store with id `${gameID}. Did you set your analytics name properly in the config?';
 		}
 	}
@@ -86,13 +86,17 @@ class Bitlytics {
 
 		if (devMode) {
 			var req = sender.GetPost(sender.Format([new Metric("sanity", null, 1)]));
-			req.onError = (s) -> { trace('sender sanity call failed. bitlytics will likely fail in prod : ${s}'); };
-			req.onData = (s) -> { trace('sender sanity call successful. bitlytics should function in prod'); };
+			req.onError = (s) -> {
+				trace('sender sanity call failed. bitlytics will likely fail in prod : ${s}');
+			};
+			req.onData = (s) -> {
+				trace('sender sanity call successful. bitlytics should function in prod');
+			};
 			req.request(true);
 		}
 	}
 
-	public function NewSession(tags:Array<Tag>=null, reportIntervalMS:Int = 10000):Void {
+	public function NewSession(tags:Array<Tag> = null, reportIntervalMS:Int = 10000):Void {
 		var num = store.NextSessionNum();
 		if (session != null) {
 			trace("starting new session while existing session in-progress");
@@ -132,7 +136,7 @@ class Bitlytics {
 		postPendingData();
 	}
 
-	public function Queue(name:String, value:Float, tags:Array<Tag>=null) {
+	public function Queue(name:String, value:Float, tags:Array<Tag> = null) {
 		if (name.indexOf(" ") > -1) {
 			trace('Metrics cannot contain spaces. Dropping metric ${name}');
 			return;
@@ -146,10 +150,8 @@ class Bitlytics {
 
 	private function postPendingData():Void {
 		var data = session.GetAllPendingData();
-		// TODO: By batching events, all events will have the same time stamp
-		// This means that our metric resolution is our reporting interval
 		if (data.length == 0) {
-			#if debug_level > 2
+			#if (debug_level > 2)
 			trace("No data to send");
 			#end
 
@@ -158,8 +160,8 @@ class Bitlytics {
 
 		var body = sender.Format(data);
 
-		#if debug_level > 2
-		trace("Sending " + data.length + " data events");
+		#if (debug_level > 2)
+		trace('Sending ${data.length} data events');
 		#end
 
 		if (devMode) {

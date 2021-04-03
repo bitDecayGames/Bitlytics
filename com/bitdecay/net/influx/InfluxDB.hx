@@ -1,11 +1,11 @@
 package com.bitdecay.net.influx;
 
-import haxe.Json;
+import haxe.Int64;
 import haxe.Http;
-
 import com.bitdecay.analytics.Metric;
 
 class InfluxDB implements DataSender {
+	private static inline var MILLI_TO_NANO = 1000000;
 
 	private var baseURL:String;
 	private var org:String;
@@ -32,6 +32,14 @@ class InfluxDB implements DataSender {
 		return request;
 	}
 
+	/**
+	 * Format the Metrics according to InfluxDB line protocol
+	 * ```haxe
+	 * measurementName,tagKey=tagValue fieldKey="fieldValue" 1465839830100400200
+	 *                                |                     |
+	 *                            1st space             2nd space
+	 * ```
+	 */
 	public function Format(data:Array<Metric>):String {
 		var buf = new StringBuf();
 		for (d in data) {
@@ -44,13 +52,23 @@ class InfluxDB implements DataSender {
 			if (d.tags.length > 0) {
 				buf.add(",");
 
-				buf.add([for (tag in d.tags) {
-					'${tag.name}=${tag.value}';
-				}].join(","));
+				buf.add([
+					for (tag in d.tags) {
+						'${tag.name}=${tag.value}';
+					}
+				].join(","));
 			}
 			buf.add(" ");
-			
+
 			buf.add('value=${d.value}');
+
+			if (d.timestampMS != null && d.timestampMS > 0) {
+				buf.add(" ");
+
+				// InfluxDB expects nanosecond precision by default
+				buf.add('${d.timestampMS * MILLI_TO_NANO}');
+			}
+
 		}
 		return buf.toString();
 	}
