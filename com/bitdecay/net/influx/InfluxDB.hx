@@ -1,6 +1,5 @@
 package com.bitdecay.net.influx;
 
-import haxe.Int64;
 import haxe.Http;
 import com.bitdecay.metrics.Metric;
 
