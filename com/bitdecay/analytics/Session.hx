@@ -79,7 +79,8 @@ class Session {
 	}
 
 	public function End():Float {
-		var duration = Date.now().getTime() - start;
-		return duration;
+		addTimeEvent();
+		timing = false;
+		return sessionTime;
 	}
 }

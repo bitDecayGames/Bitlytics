@@ -1,0 +1,3 @@
+-lib munit
+-lib openfl
+-p .

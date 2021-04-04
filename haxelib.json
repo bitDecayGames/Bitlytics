@@ -3,12 +3,12 @@
 	"url" : "https://github.com/bitDecayGames/Bitlytics",
 	"license" : "MIT",
 	"tags": ["analytics"],
-	
     "description" : "Simple analytics package for sending data to InfluxDB",
-    "version" : "0.1.0-alpha",
+    "version" : "0.2.0",
 	"releasenote" : "Initial attempt",
 	"contributors" : ["MondayHopscotch"],
     "dependencies" : {
-		"haxe-concurrent": "3.0.0"
+		"haxe-concurrent": "3.0.0",
+		"openfl": "9.0.2"
 	}
 }
