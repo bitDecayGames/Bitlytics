@@ -75,3 +75,20 @@ Currently only InfluxDB Cloud is supported
 * Event are reported via `Bitlytics.Instance().Queue(...)`
 * Event names should not have duplication of tag values as it is not needed
 * Event values currently only support floats
+
+# Testing
+
+Uses MUnit for unit tests.
+
+Install munit with:
+
+```
+haxelib install munit
+haxelib install hamcrest
+```
+
+Execute the tests with:
+
+```
+haxelib run munit test -neko
+```
