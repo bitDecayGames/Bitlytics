@@ -2,10 +2,8 @@ package com.bitdecay.analytics;
 
 import com.bitdecay.metrics.Tags;
 import com.bitdecay.metrics.Common;
-import com.bitdecay.metrics.Metric;
 import com.bitdecay.metrics.Tag;
 import massive.munit.Assert;
-
 import com.bitdecay.analytics.Session;
 
 class SessionTest {
