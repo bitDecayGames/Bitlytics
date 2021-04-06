@@ -1,5 +1,6 @@
 package com.bitdecay.analytics;
 
+import com.bitdecay.metrics.Metric;
 import com.bitdecay.metrics.Tags;
 import com.bitdecay.metrics.Common;
 import com.bitdecay.metrics.Tag;
@@ -36,6 +37,18 @@ class SessionTest {
 				}
 			}
 			Assert.isTrue(found, 'metric ${i} expected to have custom tag');
+		}
+	}
+
+	@Test
+	public function testTimestampAddedToMetrics() {
+		var session = new Session(1, []);
+		session.Add(new Metric());
+		var data = session.GetAllPendingData();
+
+		var found:Bool;
+		for (i in 0...data.length) {
+			Assert.isTrue(data[i].timestampMS > 0, 'metric ${i} expected to have time stamp');
 		}
 	}
 }
