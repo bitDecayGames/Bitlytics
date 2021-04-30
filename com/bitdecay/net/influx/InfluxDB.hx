@@ -4,7 +4,7 @@ import haxe.Http;
 import com.bitdecay.metrics.Metric;
 
 class InfluxDB implements DataSender {
-	private static inline var MILLI_TO_NANO = 1000000;
+	private static inline var PRECISION="ms";
 
 	private var baseURL:String;
 	private var org:String;
@@ -23,7 +23,7 @@ class InfluxDB implements DataSender {
 	}
 
 	public function GetPost(data:String):Http {
-		var request:Http = new Http('${baseURL}?org=${org}&bucket=${bucket}&precision=s');
+		var request:Http = new Http('${baseURL}?org=${org}&bucket=${bucket}&precision=${PRECISION}');
 		var postData:String = data;
 		request.addHeader("Content-Type", "text/plain");
 		request.addHeader("Authorization", 'Token ${authToken}');
@@ -63,9 +63,7 @@ class InfluxDB implements DataSender {
 
 			if (d.timestampMS != null && d.timestampMS > 0) {
 				buf.add(" ");
-
-				// InfluxDB expects nanosecond precision by default
-				buf.add('${d.timestampMS * MILLI_TO_NANO}');
+				buf.add('${d.timestampMS}');
 			}
 		}
 		return buf.toString();
