@@ -28,8 +28,8 @@ class InfluxDBTest {
 		testMetric.name = "testName";
 		testMetric.value = 123;
 		testMetric.tags = [testTag];
-		testMetric.timestampMS = 1;
+		testMetric.timestampMS = 12345;
 		var formatted = influx.Format([testMetric]);
-		Assert.areEqual('${testMetric.name},${testTag.name}=${testTag.value} value=${testMetric.value} ${testMetric.timestampMS * 1000000}', formatted);
+		Assert.areEqual('${testMetric.name},${testTag.name}=${testTag.value} value=${testMetric.value} ${testMetric.timestampMS}', formatted);
 	}
 }

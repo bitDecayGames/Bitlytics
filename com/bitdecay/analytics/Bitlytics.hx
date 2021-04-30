@@ -102,12 +102,12 @@ class Bitlytics {
 	}
 
 	public function NewSession(tags:Array<Tag> = null, reportIntervalMS:Int = 10000):Void {
-		var num = store.NextSessionNum();
 		if (session != null) {
 			trace("starting new session while existing session in-progress");
 			EndSession();
 		}
 
+		var num = store.NextSessionNum();
 		session = new Session(num, [
 			new Tag(Tags.GameID, gameID),
 			new Tag(Tags.ClientID, store.GetString(Values.ClientID))
@@ -149,7 +149,18 @@ class Bitlytics {
 			trace('Metrics cannot contain spaces. Dropping metric ${name}');
 			return;
 		}
-		session.Add(Metric.get(name, tags, value));
+		session.AddEvent(Metric.get(name, tags, value));
+	}
+
+	/**
+	 * Updates a gauge value, creating it with the provided tags if it does not exist in the session
+	 *
+	 * @param name	name of the gauge
+	 * @param value	value of the gauge
+	 * @param tags	any tags to use
+	**/
+	public function Gauge(name:String, value:Float, tags:Array<Tag> = null) {
+		// session.
 	}
 
 	public function setOnError(func:String->Void):Void {
