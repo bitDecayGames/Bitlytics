@@ -8,7 +8,6 @@
 	"releasenote" : "Initial attempt",
 	"contributors" : ["MondayHopscotch"],
     "dependencies" : {
-		"haxe-concurrent": "3.0.0",
-		"openfl": "9.0.2"
+		"haxe-concurrent": "3.0.0"
 	}
 }
