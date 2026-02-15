@@ -61,7 +61,7 @@ class InfluxDB implements DataSender {
 
 			buf.add('value=${d.value}');
 
-			if (d.timestampMS != null && d.timestampMS > 0) {
+			if (d.timestampMS > 0) {
 				buf.add(" ");
 				buf.add('${d.timestampMS}');
 			}
