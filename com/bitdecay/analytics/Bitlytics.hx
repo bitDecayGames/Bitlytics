@@ -1,5 +1,6 @@
 package com.bitdecay.analytics;
 
+import haxe.Exception;
 import com.bitdecay.metrics.Metric;
 import com.bitdecay.metrics.Tag;
 import com.bitdecay.metrics.Tags;
@@ -96,7 +97,11 @@ class Bitlytics {
 			req.onData = (s) -> {
 				trace('sender sanity call successful. bitlytics should function in prod');
 			};
-			req.request(true);
+			try {
+				req.request(true);
+			} catch (e:Exception) {
+				trace('sender sanity call threw an exception. bitlytics will likely fail in prod : ${e}');
+			}
 			sanityMetric.put();
 		}
 	}
